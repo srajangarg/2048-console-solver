@@ -1,9 +1,10 @@
 #include<iostream>
-#include<windows.h>
 #include <time.h>
-#include<conio.h>
 #include<stdio.h>
 #include<stdlib.h>
+#include<unistd.h>
+#include<bits/stdc++.h>
+
 
 using namespace std;
 #define N 4
@@ -25,7 +26,7 @@ int bestPlay(int maingrid[N][N],long int inscore); //return most favorable direc
 int bestPlayv2(int maingrid[N][N],long int inscore);
 
 
-int main()
+int main2()
 {
     srand(time(0));
     int maingrid[N][N]={{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
@@ -37,66 +38,95 @@ int main()
     placeNewNumber(maingrid);
 
     print2048(maingrid,playerscore);
+
+    return 0;
+}
+
+int main()
+{
+    srand(time(0));
+    int maingrid[N][N]={{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+    int tempgrid[N][N];
+    long int playerscore=0;
+    int input,flagchange;
+
+    placeNewNumber(maingrid);
+    placeNewNumber(maingrid);
+
+    cout << "\033[2J\033[1;1H";
+    print2048(maingrid,playerscore);
+
     while(!LossCondition(maingrid))
     {
-        /*
-        getch();
-        if (kbhit())
-        {
-            char ch = getch();
-            if(ch==75){input=1;}
-            else if(ch==72){input=4;}
-            else if(ch==77){input=3;}
-            else if(ch==80){input=2;}
-
-            initGrid(tempgrid,maingrid);
-            combineElements(maingrid,input,playerscore);
-            moveElements(maingrid,input);
-
-            system("cls");
-
-            if(gridchange(tempgrid,maingrid)){placeNewNumber(maingrid);}
-            print2048(maingrid,playerscore);
-            gotoxy(0,21);
-            switch(bestPlay(maingrid,playerscore))
-            {
-                case 1: cout<<"Best move: Left ";break;
-                case 2: cout<<"Best move: Down ";break;
-                case 3: cout<<"Best move: Right";break;
-                case 4: cout<<"Best move: Up   ";break;
-            }
-
-        }*/
-
         input=bestPlay(maingrid,playerscore);
+
+        // cout<<endl<<input<<endl;
+        initGrid(tempgrid,maingrid);
 
         combineElements(maingrid,input,playerscore);
         moveElements(maingrid,input);
 
-        system("cls");
-        placeNewNumber(maingrid);
+        if(gridchange(tempgrid,maingrid)){placeNewNumber(maingrid);}
 
+        cout << "\033[2J\033[1;1H";
         print2048(maingrid,playerscore);
-
-
+        // usleep(0.5*1e6);
     }
-    //print2048(maingrid,playerscore);
-    gotoxy(0,17);cout<<"              ";
-    gotoxy(0,19);cout<<"You lost! Final Score:"<<playerscore<<endl;
-    getch();
-    system("pause");
 
+    // 
+    // {
+        
+    //     // getchar();
+    //     // if (kbhit())
+    //     // {
+    //     //     char ch = getchar();
+    //     //     if(ch==75){input=1;}
+    //     //     else if(ch==72){input=4;}
+    //     //     else if(ch==77){input=3;}
+    //     //     else if(ch==80){input=2;}
+
+    //     //     initGrid(tempgrid,maingrid);
+    //     //     combineElements(maingrid,input,playerscore);
+    //     //     moveElements(maingrid,input);
+
+    //     //     cout << "\033[2J\033[1;1H";
+
+    //     //     if(gridchange(tempgrid,maingrid)){placeNewNumber(maingrid);}
+    //     //     print2048(maingrid,playerscore);
+    //     //     gotoxy(0,21);
+    //     //     switch(bestPlay(maingrid,playerscore))
+    //     //     {
+    //     //         case 1: cout<<"Best move: Left ";break;
+    //     //         case 2: cout<<"Best move: Down ";break;
+    //     //         case 3: cout<<"Best move: Right";break;
+    //     //         case 4: cout<<"Best move: Up   ";break;
+    //     //     }
+
+    //     // }
+
+        
+    //     // combineElements(maingrid,input,playerscore);
+    //     // moveElements(maingrid,input);
+
+    //     // cout << "\033[2J\033[1;1H";
+    //     // placeNewNumber(maingrid);
+
+    //     // print2048(maingrid,playerscore);
+    //     // sleep(1);
+    // }
+    //print2048(maingrid,playerscore);
+    // gotoxy(0,17);cout<<"              ";
+    // gotoxy(0,19);cout<<"You lost! Final Score:"<<playerscore<<endl;
+    // getchar();
 
     return 0;
 }
-void gotoxy(int x, int y)
+
+void gotoxy(int col, int row)
 {
-  static HANDLE h = NULL;
-  if(!h)
-    h = GetStdHandle(STD_OUTPUT_HANDLE);
-  COORD c = { x, y };
-  SetConsoleCursorPosition(h,c);
+  std::cout << "\033[" << row+1<< ";" << col+1 << "H";
 }
+
 bool LossCondition(int maingrid[N][N])
 {
     int row,col;
@@ -141,10 +171,12 @@ int twopower(int n)
 }
 void SetColor(int colourno)
 {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),  colourno);
+    // cout<<"\033[" + to_string(colourno)+ ";47m";
+    // SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),  colourno);
 }
 void print2048(int maingrid[N][N],long int playerscore)
 {
+    cout << "\033[2J\033[1;1H";
      //main grid
     SetColor(15);
    gotoxy(1,0);{for(int i=1;i<28;i++){cout<<"_";}}
@@ -153,7 +185,7 @@ void print2048(int maingrid[N][N],long int playerscore)
    {
        for(int j=1;j<17;j++)
        {
-           gotoxy(i,j);
+           gotoxy(i, j);
            cout<<"|";
        }
    }
@@ -208,7 +240,7 @@ void print2048(int maingrid[N][N],long int playerscore)
     }
     gotoxy(0,17);
     cout<<"Score:"<<playerscore;
-    gotoxy(0,19);cout<<"Play with arrow keys!";
+    gotoxy(0,19);cout<<"Play with arrow keys!"<<endl;
 
 }
 void combineElements(int maingrid[N][N],int input,long int &playerscore)
@@ -319,8 +351,6 @@ void combineElements(int maingrid[N][N],int input,long int &playerscore)
             }
         }
     }
-
-
 }
 void moveElements(int maingrid[N][N],int input)
 {
@@ -501,8 +531,6 @@ int bestPlay(int maingrid[N][N],long int inscore)
         combineElements(copygrid,dir,inscore);
         moveElements(copygrid,dir);
 
-
-
         if(gridchange(tempgrid,copygrid)){placeNewNumber(copygrid);}
         else{continue;}
 
@@ -513,7 +541,7 @@ int bestPlay(int maingrid[N][N],long int inscore)
         for(int i=0;i<200;i++)
         {
             inscore=inscoreafterdir;
-            totalscore[dir]=totalscore[dir] +playGridTillEnd(copygrid,inscore);
+            totalscore[dir]=totalscore[dir]+playGridTillEnd(copygrid,inscore);
 
         }
     }
@@ -528,7 +556,7 @@ int bestPlay(int maingrid[N][N],long int inscore)
             bestscore=totalscore[i];
             bestdir=i;
         }
-        cout<<totalscore[i]<<endl;
+        // cout<<totalscore[i]<<endl;
     }
 
     return bestdir;
